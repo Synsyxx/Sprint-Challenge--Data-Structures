@@ -36,10 +36,13 @@ class HashTable {
   insert(key, value) {
     if (this.capacityIsFull()) this.resize();
     const index = getIndexBelowMax(key.toString(), this.limit);
-    let bucket = this.storage.get(index) || [];
+    let bucket = this.storage.get(index);
+    if (!bucket) bucket = new LinkedList();
 
-    bucket = bucket.filter(item => item[0] !== key);
-    bucket.push([key, value]);
+    if (bucket.containsNode(key)) {
+      bucket = bucket.updateNode(key, value);
+    }
+    bucket.insertNode(key, value);
     this.storage.set(index, bucket);
   }
   // Removes the key, value pair from the hash table
